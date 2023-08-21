@@ -1,4 +1,4 @@
-import cv2
+import cv2 
 image = cv2.imread('Images/resized_rose.jpg')
 height, width, channels = image.shape
 half = width//2
