@@ -34,7 +34,7 @@ def padding_add(n, noise_image):
 
 def spatial_filler(noise_image):
     height,width = img.shape
-    spatial_image = np.zeros((height, width), dtype=np.uint8)
+    spatial_image = np.zeros((height, width))
     n = 5
 
     pad_image, mask = padding_add(n, noise_image)
@@ -74,8 +74,8 @@ original_image = img.copy()
 noisy_img = add_noise(img)
 spatial_filler_img = spatial_filler(noisy_img)
 median_filter_img = median_filter(noisy_img)
-calculate_psnr = psnr_func(original_image,median_filter_img)
-print(f'PSNR: {calculate_psnr:.2f} dB')
+calculate_psnr_spatial = psnr_func(original_image, spatial_filler_img)
+calculate_psnr_median = psnr_func(original_image,median_filter_img)
 
 plt.subplot(2,2,1)
 plt.imshow(original_image,cmap='gray')
@@ -87,11 +87,11 @@ plt.title('Peeper-Salt Noise Image')
 
 plt.subplot(2,2,3)
 plt.imshow(spatial_filler_img,cmap='gray')
-plt.title('Spatial_filter')
+plt.title(f'Spatial filter-> PSNR: {calculate_psnr_spatial: .2f} dB')
 
 plt.subplot(2,2,4)
 plt.imshow(median_filter_img,cmap='gray')
-plt.title('Median Filer')
+plt.title(f'Median Filer-> PSNR: {calculate_psnr_median:.2f} dB')
 
 plt.tight_layout()
 plt.show()
