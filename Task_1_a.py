@@ -1,30 +1,36 @@
 import cv2 as cv
 import numpy as np
+import matplotlib.pyplot as plt
 
-img = cv.imread('images/gray_rose.jpg', 0)
+def downsampling(image, scale):
+    row,col = image.shape
+    row = row//scale
+    col = col//scale
+    resized_image = np.zeros((row,col))
 
-[row, col] = img.shape
+    for i in range(row):
+        for j in range(col):
+            resized_image[i,j] = image[i *scale , j*scale]
+    return resized_image
 
+try:
+    image = cv.imread('Images/lena.jpg',0)
+    if image is None:
+        raise FileNotFoundError("Image not found or cannot be read.")
 
-cv.namedWindow('Downsampling',cv.WINDOW_NORMAL)
-cv.resizeWindow('Downsampling', 512, 512)
-cv.imshow('Downsampling',img)
+    image = cv.resize(image,(512,512))
 
-#down sampling
-factor = 2
-while True:
-    key = cv.waitKey(0)
-    if key == ord('q') or key == 27:
-        break
-    img2 = np.zeros((row // factor, col // factor), dtype=np.uint8)
-    for i in range(0, row, factor):
-        for j in range(0, col, factor):
-            try:
-                img2[i//factor][j//factor] = img[i][j]
-            except IndexError:
-                pass
+    dim = 3
+    height,width = image.shape
+    for k in range(1,10):
+        plt.subplot(dim, dim, k)
+        plt.title(f'{height//(2**(k-1))} X {width//(2**(k-1))}')
+        plt.imshow(image, cmap='gray')
+        image = downsampling(image,2)
+        plt.axis('off')
 
-    cv.imshow('Downsampling', img2)
-    factor *= 2
+    plt.show()
+    plt.tight_layout()
 
-cv.destroyAllWindows()
+except FileNotFoundError as e:
+    print("Error:",e)
