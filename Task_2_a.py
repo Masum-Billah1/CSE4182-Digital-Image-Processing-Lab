@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 img = cv.imread('Images/gray_rose.jpg',0)
 row,col = img.shape
 
-enhanced_image = img
+enhanced_image = img.copy()
 for i in range(row):
     for j in range(col):
         if(enhanced_image[i][j]>=64 and enhanced_image[i][j]<128):
-            enhanced_image[i][j]+=100
-        if(enhanced_image[i][j]>255):
-            enhanced_image[i][j] = 255
+            enhanced_image[i][j] += 100
+        if enhanced_image[i][j]>255:
+            enhanced_image = 255
 
 
 plt.subplot(1,2,1)
@@ -19,6 +19,6 @@ plt.axis('off')
 
 plt.subplot(1,2,2)
 plt.axis('off')
-plt.imshow(img,cmap='gray')
+plt.imshow(enhanced_image,cmap='gray')
 plt.title('Brightness Enhancement Image')
 plt.show()
