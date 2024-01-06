@@ -24,16 +24,18 @@ for i in range(row):
         inverse_img[i, j] = np.exp(logarithomic_img[i, j] / c) - 1
 
 
-plt.subplot(1,4,1)
+plt.subplot(2,2,1)
 plt.imshow(original_img,cmap='gray')
 plt.title('Original Image')
-plt.subplot(1,4,2)
+plt.subplot(2,2,2)
 plt.imshow(power_img,cmap='gray')
 plt.title('Power Law Image')
-plt.subplot(1,4,3)
+plt.subplot(2,2,3)
 plt.imshow(logarithomic_img,cmap='gray')
 plt.title('logarithmic Image')
-plt.subplot(1,4,4)
+plt.subplot(2,2,4)
 plt.imshow(inverse_img,cmap='gray')
 plt.title('Inverse logarithmic Image')
+
+plt.tight_layout()
 plt.show()
