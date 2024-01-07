@@ -58,7 +58,7 @@ def averaging_filter(noisy_image,mask_size):
 def median_filter(noisy_image,mask_size):
     median_filter_image = np.zeros_like(noisy_image)
     padding_image = pad_image(noisy_image, mask_size)
-    mask = np.full((mask_size, mask_size), (1 / (mask_size * mask_size)))
+    mask = np.full((mask_size, mask_size), 1)
     row, col = padding_image.shape
     mask_row, mask_col = mask_size, mask_size
     pad_size = int((mask_row - 1) / 2)
