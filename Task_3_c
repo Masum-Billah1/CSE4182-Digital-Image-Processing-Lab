@@ -14,7 +14,7 @@ def add_noise(image):
         y = random.randint(0,col-1)
         noisy_image[x,y] = 255
 
-    number_of_peeper_noise = 0
+    number_of_peeper_noise = 5000
     for i in range(number_of_peeper_noise):
         x = random.randint(0,row-1)
         y = random.randint(0,col-1)
@@ -27,15 +27,16 @@ def pad_image(image, karnel):
     padding_row = (karnel-1)+row
     padding_column = (karnel-1)+col
     padding_image = np.zeros((padding_row,padding_column))
+    Pad_size = karnel//2
 
-    for i in range(karnel,padding_row-karnel):
-        for j in range(karnel,padding_column-karnel):
-            padding_image[i, j] = image[i - karnel, j - karnel]
+    for i in range(Pad_size,padding_row-Pad_size):
+        for j in range(Pad_size,padding_column-Pad_size):
+            padding_image[i][j] = image[i - Pad_size][j - Pad_size]
 
     return padding_image
 
 
-def Geometric_mean_filter(noisy_image,karnel):
+def Geometric_Harmonic_mean_filter(noisy_image,karnel):
     row,col = noisy_image.shape
     Geometric_image = np.zeros_like(noisy_image)
     Harmonic_image = np.zeros_like(noisy_image)
@@ -49,7 +50,7 @@ def Geometric_mean_filter(noisy_image,karnel):
             weight,count = 0,0
             for i in range(karnel):
                 for j in range(karnel):
-                    if(window[i][j]>0):
+                    if window[i][j]>0:
                         weight += np.log(window[i][j])
                         count += 1
 
@@ -67,9 +68,11 @@ def Geometric_mean_filter(noisy_image,karnel):
 
 #PSNR = 10log10(Max^2/MSE) MSE-> Mean Squared Error
 def PSNR(original_image,filtered_image):
+    original_image = original_image.astype(np.float64)
+    filtered_image = filtered_image.astype(np.float64)
     mse = np.mean((original_image-filtered_image)**2)
-    max = 255
-    psnr = 10*np.log10(max**2/mse)
+    max = 255.0
+    psnr = 10.0*np.log10(max**2/mse)
     return psnr
 
 
@@ -77,7 +80,7 @@ image = cv.imread('Images/lena.jpg',0)
 image = cv.resize(image,(512,512))
 noisy_image = add_noise(image)
 noisy_image_PSNR = PSNR(image,noisy_image)
-Geometric_Filtered_image,Harmonic_Filtered_image = Geometric_mean_filter(noisy_image,3)
+Geometric_Filtered_image,Harmonic_Filtered_image = Geometric_Harmonic_mean_filter(noisy_image,3)
 Geometric_Filtered_image_PSNR = PSNR(image,Geometric_Filtered_image)
 Harmonic_Filtered_image_PSNR = PSNR(image,Harmonic_Filtered_image)
 
@@ -99,7 +102,7 @@ plt.axis('off')
 
 plt.subplot(2,2,4)
 plt.imshow(Harmonic_Filtered_image,cmap='gray')
-plt.title(f'Geometry Mean Filter PSNR: {Harmonic_Filtered_image_PSNR:.2f}')
+plt.title(f'Harmonic Mean Filter PSNR: {Harmonic_Filtered_image_PSNR:.2f}')
 plt.axis('off')
 
 plt.tight_layout()
