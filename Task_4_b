@@ -2,43 +2,41 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 
-original_image = cv.imread('Images/ideal_low_pass.png',0)
-image = cv.resize(original_image,(512,512))
+original_image = cv.imread("Images/lena.jpg",0)
+original_image = cv.resize(original_image,(512,512))
 
-rows,columns = image.shape
+D0 = 10
+mean = 0
+deviation = 1
+noise = np.random.normal(mean,deviation,original_image.shape).astype(np.uint8)
+noisy_image = cv.add(original_image,noise)
 
-mean_of_distribution = 0
-standard_deviation = 25
-noise = np.random.normal(0,0.5,image.shape).astype(np.uint8)
+fft_image = np.fft.fftshift(np.fft.fft2(original_image))
+m,n = fft_image.shape
 
-noise_image = cv.add(image, noise)
-
-fft_image = np.fft.fftshift(np.fft.fft2(noise_image))
-
-D0 = 2
-number_of_image = 15
-dimension = 4
-
-n,m = fft_image.shape
 lowpass_image = np.zeros((n,m))
 
-for u in range(n):
-    for v in range(m):
-        lowpass_image[u,v] = np.sqrt((u-n/2)**2 + (v-m/2)**2)
+for u in range(m):
+    for v in range(n):
+        lowpass_image[u,v] = np.sqrt((u-m/2)**2+(v-n/2)**2)
 
-temporary_image = np.copy(lowpass_image)
-for i in range(number_of_image):
-    lowpass_image = np.copy(temporary_image)
-    lowpass_image = lowpass_image <= D0
-    lowpass_image = lowpass_image*fft_image
+lowpass_image = lowpass_image <= D0
+lowpass_image = lowpass_image*fft_image
 
-    lowpass_image = np.abs(np.fft.ifft2(lowpass_image))
-    lowpass_image = lowpass_image/255
-    temp = int(i+1);
-    plt.subplot(dimension,dimension,temp)
-    plt.title(f'Low pass img D0= {D0}')
-    plt.imshow(lowpass_image,cmap='gray')
-    plt.tight_layout()
-    D0 = D0+2
+lowpass_image = abs(np.fft.ifft2(lowpass_image))
+print(lowpass_image)
+
+plt.subplot(2,2,1)
+plt.imshow(original_image,cmap="gray")
+plt.title("Original Image")
+
+plt.subplot(2,2,2)
+plt.imshow(noisy_image,cmap="gray")
+plt.title("Noisy Image")
+
+plt.subplot(2,2,3)
+plt.imshow(lowpass_image,cmap="gray")
+plt.title("Low pass filtered Image")
 
 plt.show()
+plt.tight_layout()
